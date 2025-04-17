@@ -102,13 +102,13 @@ const ProfessionalIdForm = () => {
         <div className="border-t-2 border-blue-100 pt-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-4">Social Links</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SocialInput icon="whatsapp" label="WhatsApp Number" />
-            <SocialInput icon="instagram" label="Instagram Link" />
-            <SocialInput icon="facebook" label="Facebook Link" />
-            <SocialInput icon="linkedin" label="LinkedIn Link" />
-            <SocialInput icon="twitter" label="Twitter Link" />
-            <SocialInput icon="globe" label="Website Link" />
-            <SocialInput icon="map-marker" label="Location" />
+            <SocialInput label="WhatsApp Number" />
+            <SocialInput label="Instagram Link" />
+            <SocialInput label="Facebook Link" />
+            <SocialInput label="LinkedIn Link" />
+            <SocialInput label="Twitter Link" />
+            <SocialInput label="Website Link" />
+            <SocialInput label="Location" />
           </div>
         </div>
 

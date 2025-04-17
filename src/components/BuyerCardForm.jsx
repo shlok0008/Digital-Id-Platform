@@ -30,7 +30,7 @@ const BuyerCardForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-fit bg-gray-50 p-8">
       <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header with dynamic brand color */}
         <div className="p-4 rounded-lg" style={{ backgroundColor: brandColor }}>
