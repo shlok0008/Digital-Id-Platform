@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ProfessionalIDForm from './ProfessionalIdForm.jsx'; // 🟢 import the form
+import StudentIDForm from './StudentIDForm.jsx';
+import BuyerCardForm from './BuyerCardForm.jsx';
+import SellerCardForm from './SellerCardForm.jsx';
+import BioDataForm from './BioDataForm.jsx';
 
 const options = ['Student ID', 'Professional Portfolio', 'Buyer', 'Seller', 'Bio Data'];
 
@@ -23,6 +27,14 @@ const CreateProfile = () => {
     switch (active) {
       case 'Professional Portfolio':
         return <ProfessionalIDForm />;
+      case 'Student ID':
+        return <StudentIDForm />;
+      case 'Buyer':
+        return <BuyerCardForm />;
+      case 'Seller':
+        return <SellerCardForm />;
+      case 'Bio Data':
+        return <BioDataForm />;
       default:
         return <div className="mt-20 text-gray-700 text-lg">This is the {active} Form.</div>;
     }
