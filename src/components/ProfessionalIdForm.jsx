@@ -6,6 +6,34 @@ const ProfessionalIdForm = () => {
   const [logoPreview, setLogoPreview] = useState(null);
   const formRef = useRef();
 
+  // On Submit Event
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const data = {
+      fullName: formRef.current.elements.fullName.value,
+      mobile: formRef.current.elements.mobile.value,
+      email: formRef.current.elements.email.value,
+      photo: previewImage,
+      company: formRef.current.elements.company.value,
+      address: formRef.current.elements.address.value,
+      services: formRef.current.elements.services.value,
+      logo: logoPreview,
+      // Social links
+      whatsapp: formRef.current.elements.whatsapp?.value,
+      instagram: formRef.current.elements.instagram?.value
+      // ... other fields
+    };
+  
+    try {
+      await axios.post('http://localhost:5000/api/professionals', data);
+      alert('Professional ID generated!');
+    } catch (error) {
+      alert(error.response?.data?.errors?.join('\n') || 'Error creating ID');
+    }
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -36,7 +64,7 @@ const ProfessionalIdForm = () => {
 
   return (
     <div className="min-h-screen bg-blue-50 p-8">
-      <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header */}
         <div className="bg-blue-600 text-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold">Professional ID Card Details</h2>

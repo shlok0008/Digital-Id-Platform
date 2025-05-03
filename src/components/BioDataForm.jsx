@@ -1,10 +1,41 @@
 import { useState, useRef } from 'react';
 import React from 'react';
+import axios from 'axios';
 
 const BioDataForm = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [educationEntries, setEducationEntries] = useState([{ id: 0 }]);
   const formRef = useRef();
+
+// Inside your BioDataForm component, add the submit handler:
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // 1. Prepare form data
+  const formData = new FormData(formRef.current);
+  const data = {
+    fullName: formData.get('fullName'),
+    dob: formData.get('dob'),
+    // ... collect all other fields similarly
+    education: educationEntries.map((entry, index) => ({
+      degree: formData.get(`degree-${index}`),
+      institution: formData.get(`institution-${index}`),
+      year: formData.get(`year-${index}`),
+      specialization: formData.get(`specialization-${index}`)
+    })),
+    photo: photoPreview // Base64 string from state
+  };
+
+  // 2. Submit to backend
+  try {
+    const response = await axios.post('http://localhost:5000/api/biodata', data);
+    console.log('Success:', response.data);
+    alert('BioData saved successfully!');
+  } catch (error) {
+    console.error('Error:', error.response?.data || error.message);
+    alert(error.response?.data?.error || 'Failed to save BioData');
+  }
+};
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -33,7 +64,7 @@ const BioDataForm = () => {
 
   return (
     <div className="min-h-screen bg-purple-50 p-8">
-      <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header */}
         <div className="bg-blue-600 text-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold">BioData Form</h2>

@@ -6,6 +6,40 @@ const StudentIDForm = () => {
   const [logoPreview, setLogoPreview] = useState(null);
   const formRef = useRef();
 
+  // On submit event
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const data = {
+      name: formRef.current.elements.name.value,
+      age: formRef.current.elements.age.value,
+      student_contact: formRef.current.elements.student_contact.value,
+      student_email: formRef.current.elements.student_email.value,
+      photo: photoPreview,
+      school: formRef.current.elements.school.value,
+      id_number: formRef.current.elements.id_number.value,
+      logo: logoPreview,
+      address: formRef.current.elements.address.value,
+      parent_contact: formRef.current.elements.parent_contact.value,
+      parent_email: formRef.current.elements.parent_email?.value,
+      instagram: formRef.current.elements.instagram?.value,
+      facebook: formRef.current.elements.facebook?.value
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/students', data);
+      console.log('Student ID created:', response.data);
+      alert('Student ID created successfully!');
+      handleReset(); // Optional: clear form after success
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || 
+                      error.response?.data?.errors?.join('\n') || 
+                      'Failed to create student ID';
+      alert(errorMsg);
+    }
+  };
+
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -32,7 +66,7 @@ const StudentIDForm = () => {
 
   return (
     <div className="min-h-screen bg-purple-50 p-8">
-      <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header */}
         <div className="bg-blue-600 text-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold">Student ID Card Application</h2>

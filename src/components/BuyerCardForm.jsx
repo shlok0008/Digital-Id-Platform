@@ -1,10 +1,31 @@
 import { useState, useRef } from 'react';
 import React from 'react';
+import axios from 'axios';
 
 const BuyerCardForm = () => {
   const [brandColor, setBrandColor] = useState('#3B82F6');
   const [productCodes, setProductCodes] = useState(['']);
   const formRef = useRef();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+      name: formRef.current.elements.name.value,
+      email: formRef.current.elements.email.value,
+      phone: formRef.current.elements.phone.value,
+      brandColor,
+      address: formRef.current.elements.address.value,
+      productCodes: productCodes.filter(code => code.trim() !== '')
+    };
+  
+    try {
+      await axios.post('http://localhost:5000/api/buyercards', formData);
+      alert('Buyer card created!');
+    } catch (error) {
+      alert(error.response?.data?.error || 'Creation failed');
+    }
+  };
 
   const handleAddProductCode = () => {
     setProductCodes([...productCodes, '']);
@@ -31,7 +52,7 @@ const BuyerCardForm = () => {
 
   return (
     <div className="min-h-fit bg-gray-50 p-8">
-      <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header with dynamic brand color */}
         <div className="p-4 rounded-lg" style={{ backgroundColor: brandColor }}>
           <h2 className="text-2xl font-bold text-white">Buyer Card Registration</h2>

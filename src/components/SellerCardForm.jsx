@@ -1,11 +1,23 @@
-import { useState, useRef } from 'react';
 import React from 'react';
+import { useState, useRef } from 'react';
+import axios from 'axios';
 
 const SellerCardForm = () => {
   const [brandColor, setBrandColor] = useState('#3B82F6');
   const [logoPreview, setLogoPreview] = useState(null);
   const [permits, setPermits] = useState(['']);
   const formRef = useRef();
+
+  const [formData, setFormData] = useState({
+    owner: '',
+    businessName: '',
+    mobile: '',
+    address: '',
+  });
+
+  const handleInputChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
@@ -38,24 +50,47 @@ const SellerCardForm = () => {
     setBrandColor('#3B82F6');
     setLogoPreview(null);
     setPermits(['']);
+    setFormData({
+      owner: '',
+      businessName: '',
+      mobile: '',
+      address: '',
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...formData,
+        logo: logoPreview,
+        brandColor,
+        permits,
+      };
+
+      const res = await axios.post('http://localhost:5000/api/sellers', payload);
+      alert('Seller registered successfully!');
+      handleReset();
+    } catch (err) {
+      console.error(err);
+      const message = err.response?.data?.error || 'Submission failed. Try again.';
+      alert(message);
+    }
   };
 
   return (
     <div className="min-h-fit bg-gray-50 p-8">
-      <form ref={formRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
-        {/* Dynamic Header */}
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
         <div className="p-4 rounded-lg" style={{ backgroundColor: brandColor }}>
           <h2 className="text-2xl font-bold text-white">Seller Card Registration</h2>
           <p className="text-opacity-90 text-white">Business information portal</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column */}
           <div className="space-y-4">
-            <InputField label="Owner Name" name="owner" required />
-            <InputField label="Business Name" name="business" required />
-            <InputField label="Mobile Number" name="mobile" type="tel" required />
-            
+            <InputField label="Owner Name" name="owner" value={formData.owner} onChange={handleInputChange} required />
+            <InputField label="Business Name" name="businessName" value={formData.businessName} onChange={handleInputChange} required />
+            <InputField label="Mobile Number" name="mobile" value={formData.mobile} onChange={handleInputChange} type="tel" required />
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Brand Color</label>
               <input
@@ -67,12 +102,13 @@ const SellerCardForm = () => {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Business Address</label>
               <textarea
                 name="address"
+                value={formData.address}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm border-2 p-2 h-32 resize-none"
                 required
               />
@@ -127,7 +163,6 @@ const SellerCardForm = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4">
           <button
             type="submit"
@@ -149,13 +184,14 @@ const SellerCardForm = () => {
   );
 };
 
-// Reusable Input Component
-const InputField = ({ label, name, type = 'text', required = false }) => (
+const InputField = ({ label, name, type = 'text', value, onChange, required = false }) => (
   <div className="space-y-2">
     <label className="block text-sm font-medium text-gray-700">{label}</label>
     <input
       type={type}
       name={name}
+      value={value}
+      onChange={onChange}
       required={required}
       className="mt-1 block w-full rounded-md border-gray-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm border-2 p-2"
     />
