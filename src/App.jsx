@@ -4,6 +4,7 @@ import Home from './page/Home.jsx';
 import Navbar from './components/Navbar.jsx';
 import CreateProfile from './components/CreateProfile.jsx';
 import ViewProfiles from './components/ViewProfile.jsx';
+import StudentProfile from './components/StudentProfile';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Route path="/create" element={<CreateProfile />} />
         <Route path="/viewprofile" element={<ViewProfiles/>} />
         <Route path="/viewprofile/:category" element={<ViewProfiles />} />
-
+        <Route path="/student/:id" element={<StudentProfile />} />
       </Routes>
     </div>
     

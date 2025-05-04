@@ -28,7 +28,13 @@ const ViewProfiles = () => {
 
     const fetchProfiles = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/profiles/${category}`);
+        let url = '';
+        if (category === 'student-id') {
+          url = 'http://localhost:5000/api/students';
+        } else {
+          url = `http://localhost:5000/api/profiles/${category}`;
+        }
+        const res = await axios.get(url);
         setProfiles(res.data);
       } catch (err) {
         setError('Failed to fetch profiles.');
@@ -39,6 +45,19 @@ const ViewProfiles = () => {
 
     fetchProfiles();
   }, [category]);
+
+  const renderStudentCards = () => {
+    return profiles.map((profile) => (
+      <div
+        key={profile._id}
+        className="bg-white shadow-md rounded-lg p-4 border border-gray-200 cursor-pointer"
+        onClick={() => navigate(`/student/${profile._id}`)} // Navigate to full profile on click
+      >
+        <h3 className="text-xl font-semibold mb-2">{profile.name}</h3>
+        <p><strong>ID:</strong> {profile.id_number}</p>
+      </div>
+    ));
+  };
 
   const renderCards = () => {
     if (loading) {
@@ -65,6 +84,14 @@ const ViewProfiles = () => {
       );
     }
 
+    if (category === 'student-id') {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          {renderStudentCards()}
+        </div>
+      );
+    }
+
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
         {profiles.map((profile, index) => (
@@ -73,7 +100,6 @@ const ViewProfiles = () => {
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Age:</strong> {profile.age}</p>
             <p><strong>Gender:</strong> {profile.gender}</p>
-            {/* Add more fields conditionally if needed */}
           </div>
         ))}
       </div>
@@ -90,9 +116,7 @@ const ViewProfiles = () => {
             return (
               <div
                 key={label}
-                className={`cursor-pointer px-4 py-2 w-full rounded-lg transition-all duration-300 ${
-                  category === slug ? 'bg-blue-600' : 'hover:bg-gray-700'
-                }`}
+                className={`cursor-pointer px-4 py-2 w-full rounded-lg transition-all duration-300 ${category === slug ? 'bg-blue-600' : 'hover:bg-gray-700'}`}
                 onClick={() => handleClick(label, index)}
               >
                 {label}
