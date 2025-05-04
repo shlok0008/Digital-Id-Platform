@@ -3,8 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const location = useLocation();
-  const isOnViewProfile = location.pathname === '/viewprofile';
-  const isOnCreate = location.pathname === '/create';
+
+  // Checks if the current path starts with "/viewprofile"
+  const isOnViewProfile = location.pathname.startsWith('/viewprofile');
 
   return (
     <nav className="flex justify-between bg-white items-center px-6 py-4 font-black shadow-xl">
@@ -31,3 +32,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
