@@ -1,16 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
+  const location = useLocation();
+  const isOnViewProfile = location.pathname === '/viewprofile';
+  const isOnCreate = location.pathname === '/create';
+
   return (
     <nav className="flex justify-between bg-white items-center px-6 py-4 font-black shadow-xl">
-        <Link to={'/'}>
-            <h1 className="text-xl font-semibold">Digital Identity Platform</h1>
-        </Link>
+      <Link to={'/'}>
+        <h1 className="text-xl font-semibold">Digital Identity Platform</h1>
+      </Link>
       <div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white mx-2 px-4 py-2 rounded">
-            View Profile
-        </button>
+        {isOnViewProfile ? (
+          <Link to="/create">
+            <button className="bg-green-500 hover:bg-green-600 text-white mx-2 px-4 py-2 rounded">
+              Create Profile
+            </button>
+          </Link>
+        ) : (
+          <Link to="/viewprofile">
+            <button className="bg-blue-500 hover:bg-blue-600 text-white mx-2 px-4 py-2 rounded">
+              View Profile
+            </button>
+          </Link>
+        )}
       </div>
     </nav>
   );
