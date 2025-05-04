@@ -1,16 +1,19 @@
 import { useState, useRef } from 'react';
 import React from 'react';
+import toast from 'react-hot-toast';  // Import react-hot-toast
+import axios from "axios";
 
 const StudentIDForm = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const formRef = useRef();
+  const [loading, setLoading] = useState(false);  // For loading spinner
 
   // On submit event
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);  // Start loading
+
     const data = {
       name: formRef.current.elements.name.value,
       age: formRef.current.elements.age.value,
@@ -30,13 +33,16 @@ const StudentIDForm = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/students', data);
       console.log('Student ID created:', response.data);
-      alert('Student ID created successfully!');
-      handleReset(); // Optional: clear form after success
+      toast.success('Student ID created successfully!');
+      handleReset(); // Reset form after success
     } catch (error) {
+      console.log(error);
       const errorMsg = error.response?.data?.error || 
-                      error.response?.data?.errors?.join('\n') || 
-                      'Failed to create student ID';
-      alert(errorMsg);
+                       error.response?.data?.errors?.join('\n') || 
+                       'Failed to create student ID';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);  // Stop loading
     }
   };
 
@@ -66,7 +72,7 @@ const StudentIDForm = () => {
 
   return (
     <div className="min-h-screen bg-purple-50 p-8">
-      <form ref={formRef} onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className={`max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 space-y-6 ${loading ? 'form-blur' : ''}`}>
         {/* Header */}
         <div className="bg-blue-600 text-white p-4 rounded-lg">
           <h2 className="text-2xl font-bold">Student ID Card Application</h2>
@@ -144,8 +150,18 @@ const StudentIDForm = () => {
           <button
             type="submit"
             className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            disabled={loading}  // Disable button while loading
           >
-            Generate Student ID
+            {loading ? (
+              <span className="flex justify-center items-center">
+                <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v2m0 14v2m9-9h2M3 12H1m16.242-7.758l-1.414 1.414M5.636 18.364l-1.414-1.414M18.364 5.636l-1.414-1.414M5.636 5.636l1.414 1.414" />
+                </svg>
+                Processing...
+              </span>
+            ) : (
+              'Generate Student ID'
+            )}
           </button>
           <button
             type="button"

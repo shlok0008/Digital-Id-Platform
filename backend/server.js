@@ -4,7 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 // Route imports
-const bioDataRoutes = require('./routes/bioData');
+const bioDataRoutes = require('./routes/biodata');
 const buyerCardRoutes = require('./routes/buyerCard');
 const professionalRoutes = require('./routes/professional');
 const studentRoutes = require('./routes/student');

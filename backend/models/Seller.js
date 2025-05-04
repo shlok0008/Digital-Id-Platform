@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const sellerSchema = new mongoose.Schema({
   owner: { type: String, required: true },
   businessName: { type: String, required: true },
-  mobile: {
+  phone: {
     type: String,
     required: true,
     validate: {
@@ -12,9 +12,9 @@ const sellerSchema = new mongoose.Schema({
     },
   },
   address: { type: String, required: true },
-  logo: { type: String, required: true }, // base64 image
-  brandColor: { type: String, default: '#3B82F6' },
-  permits: [{ type: String }],
+  logo: String,
+  brandColor: String,
+  permits: [String],
   createdAt: { type: Date, default: Date.now },
 });
 

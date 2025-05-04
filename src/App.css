@@ -1,0 +1,5 @@
+.form-blur {
+    filter: blur(4px);
+    pointer-events: none; /* Disable interactions */
+  }
+  
