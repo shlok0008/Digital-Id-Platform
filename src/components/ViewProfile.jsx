@@ -17,6 +17,7 @@ const ViewProfiles = () => {
   const handleClick = (label, index) => {
     setArrowPosition(index);
     navigate(`/viewprofile/${label.toLowerCase().replace(/\s/g, '-')}`);
+    sessionStorage.setItem('selectedCategory', label); // Store the selected category in sessionStorage
   };
 
   useEffect(() => {
@@ -29,11 +30,26 @@ const ViewProfiles = () => {
     const fetchProfiles = async () => {
       try {
         let url = '';
-        if (category === 'student-id') {
-          url = 'http://localhost:5000/api/students';
-        } else {
-          url = `http://localhost:5000/api/profiles/${category}`;
+        switch (category) {
+          case 'student-id':
+            url = 'http://localhost:5000/api/students';
+            break;
+          case 'professional-portfolio':
+            url = 'http://localhost:5000/api/professionals';
+            break;
+          case 'buyer':
+            url = 'http://localhost:5000/api/buyercards';
+            break;
+          case 'seller':
+            url = 'http://localhost:5000/api/sellers';
+            break;
+          case 'bio-data':
+            url = 'http://localhost:5000/api/biodata';
+            break;
+          default:
+            throw new Error('Unknown category');
         }
+
         const res = await axios.get(url);
         setProfiles(res.data);
       } catch (err) {
@@ -46,18 +62,14 @@ const ViewProfiles = () => {
     fetchProfiles();
   }, [category]);
 
-  const renderStudentCards = () => {
-    return profiles.map((profile) => (
-      <div
-        key={profile._id}
-        className="bg-white shadow-md rounded-lg p-4 border border-gray-200 cursor-pointer"
-        onClick={() => navigate(`/student/${profile._id}`)} // Navigate to full profile on click
-      >
-        <h3 className="text-xl font-semibold mb-2">{profile.name}</h3>
-        <p><strong>ID:</strong> {profile.id_number}</p>
-      </div>
-    ));
-  };
+  // Effect to get the saved category and set arrowPosition when component loads
+  useEffect(() => {
+    const savedCategory = sessionStorage.getItem('selectedCategory');
+    if (savedCategory) {
+      const index = options.indexOf(savedCategory);
+      setArrowPosition(index !== -1 ? index : 0); // Set the position based on saved category
+    }
+  }, []);
 
   const renderCards = () => {
     if (loading) {
@@ -84,24 +96,140 @@ const ViewProfiles = () => {
       );
     }
 
-    if (category === 'student-id') {
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-          {renderStudentCards()}
-        </div>
-      );
-    }
+    const renderProfileCard = (profile) => {
+      switch (category) {
+        case 'student-id':
+          return (
+            <div
+              key={profile._id}
+              className="bg-white shadow-md rounded-lg p-4 border border-gray-200 cursor-pointer"
+              onClick={() => navigate(`/student/${profile._id}`)}
+            >
+              <h3 className="text-xl font-semibold mb-2">{profile.name}</h3>
+              <p><strong>ID:</strong> {profile.id_number}</p>
+            </div>
+          );
+
+        case 'bio-data':
+          return (
+            <div
+              key={profile._id}
+              className="bg-white shadow-md rounded-lg p-4 border border-gray-200 cursor-pointer"
+              onClick={() => navigate(`/biodata/${profile._id}`)}
+            >
+              {profile.photo && (
+                <img
+                  src={profile.photo}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                />
+              )}
+              <h3 className="text-xl font-semibold text-center mb-2">{profile.fullName}</h3>
+              <p className="text-center text-gray-600 mb-1"><strong>Location:</strong> {profile.location}</p>
+              <p className="text-center text-gray-600 mb-1"><strong>Email:</strong> {profile.email}</p>
+              <p className="text-center text-gray-600 mb-1"><strong>Phone:</strong> {profile.phone}</p>
+            </div>
+          );
+
+        case 'buyer':
+          return (
+            <div
+              key={profile._id}
+              className="bg-white rounded-xl shadow hover:shadow-lg transition-shadow p-6 cursor-pointer border-t-4"
+              style={{ borderColor: profile.brandColor }}
+              onClick={() => navigate(`/buyercard/${profile._id}`)} // Navigate on card click
+            >
+              <h2 className="text-xl font-semibold">{profile.name}</h2>
+              <p className="text-sm text-gray-600">{profile.email}</p>
+              <p className="text-sm text-gray-600">{profile.phone}</p>
+            </div>
+          );
+
+          case 'seller':
+            return (
+              <div
+                key={profile._id}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition-shadow p-6 cursor-pointer border-t-4"
+                style={{ borderColor: profile.brandColor }}
+                onClick={() => navigate(`/seller/${profile._id}`)} // Adjust the navigate path accordingly
+              >
+                <h2 className="text-xl font-semibold">{profile.businessName}</h2>
+                <p className="text-sm text-gray-600">{profile.owner}</p>
+                <p className="text-sm text-gray-600">{profile.phone}</p>
+              </div>
+            );
+
+            case 'professional-portfolio':
+              return (
+                <div
+                  key={profile._id}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-6 cursor-pointer relative group"
+                  onClick={() => navigate(`/professional/${profile._id}`)}
+                >
+                  <div className="flex items-start gap-4">
+                    {profile.photo && (
+                      <img
+                        src={profile.photo}
+                        alt="Profile"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-blue-200"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h2 className="text-xl font-bold text-blue-900">{profile.fullName}</h2>
+                      <p className="text-blue-600 font-medium">{profile.company}</p>
+                      <p className="text-sm text-gray-600 mt-2">{profile.services}</p>
+                    </div>
+                    {profile.logo && (
+                      <img
+                        src={profile.logo}
+                        alt="Company Logo"
+                        className="w-16 h-16 object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                      />
+                    )}
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-blue-50">
+                    <div className="flex flex-wrap gap-2 text-sm">
+                      {profile.location && (
+                        <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                          📍 {profile.location}
+                        </span>
+                      )}
+                      {profile.email && (
+                        <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                          ✉️ {profile.email}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+
+        default:
+          return (
+            <div
+              key={profile._id}
+              className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
+            >
+              {profile.photo && (
+                <img
+                  src={profile.photo}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                />
+              )}
+              <h3 className="text-xl font-semibold text-center mb-2">{profile.fullName}</h3>
+              <p className="text-center text-gray-600 mb-1"><strong>Location:</strong> {profile.location}</p>
+              <p className="text-center text-gray-600 mb-1"><strong>Email:</strong> {profile.email}</p>
+              <p className="text-center text-gray-600 mb-1"><strong>Phone:</strong> {profile.phone}</p>
+            </div>
+          );
+      }
+    };
 
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-        {profiles.map((profile, index) => (
-          <div key={index} className="bg-white shadow-md rounded-lg p-4 border border-gray-200">
-            <h3 className="text-xl font-semibold mb-2">{profile.name || 'Unnamed'}</h3>
-            <p><strong>Email:</strong> {profile.email}</p>
-            <p><strong>Age:</strong> {profile.age}</p>
-            <p><strong>Gender:</strong> {profile.gender}</p>
-          </div>
-        ))}
+        {profiles.map((profile) => renderProfileCard(profile))}
       </div>
     );
   };

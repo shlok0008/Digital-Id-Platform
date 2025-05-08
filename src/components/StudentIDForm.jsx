@@ -27,7 +27,10 @@ const StudentIDForm = () => {
       parent_contact: formRef.current.elements.parent_contact.value,
       parent_email: formRef.current.elements.parent_email?.value,
       instagram: formRef.current.elements.instagram?.value,
-      facebook: formRef.current.elements.facebook?.value
+      facebook: formRef.current.elements.facebook?.value,
+      linkedin: formRef.current.elements.linkedin?.value,
+      twitter: formRef.current.elements.twitter?.value,
+      website: formRef.current.elements.website?.value
     };
 
     try {
@@ -137,11 +140,11 @@ const StudentIDForm = () => {
         <div className="border-t-2 border-blue-100 pt-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-4">Social Media Links</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SocialInput icon="instagram" label="Instagram" />
-            <SocialInput icon="facebook" label="Facebook" />
-            <SocialInput icon="linkedin" label="LinkedIn" />
-            <SocialInput icon="twitter" label="Twitter" />
-            <SocialInput icon="globe" label="Personal Website" />
+            <SocialInput icon="instagram" label="Instagram" name="instagram" />
+            <SocialInput icon="facebook" label="Facebook" name="facebook" />
+            <SocialInput icon="linkedin" label="LinkedIn" name="linkedin" />
+            <SocialInput icon="twitter" label="Twitter" name="twitter" />
+            <SocialInput icon="globe" label="Personal Website" name="website" />
           </div>
         </div>
 
@@ -190,7 +193,7 @@ const InputField = ({ label, name, type = 'text', required = false }) => (
 );
 
 // Social Input Component (same as previous)
-const SocialInput = ({ icon, label }) => {
+const SocialInput = ({ icon, label ,name }) => {
   const icons = { /* Keep same icon paths as previous implementation */ };
   return (
     <div className="flex items-center space-x-2">
@@ -199,6 +202,7 @@ const SocialInput = ({ icon, label }) => {
       </svg>
       <input
         type="url"
+        name={name}
         placeholder={label}
         className="flex-1 rounded-md border-blue-200 focus:border-blue-500 focus:ring-blue-500 shadow-sm border-2 p-2 text-sm"
       />

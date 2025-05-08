@@ -10,6 +10,29 @@ exports.createBioData = async (req, res) => {
   }
 };
 
+exports.getAllBioData = async (req, res) => {
+  try {
+    const profiles = await BioData.find().sort({ createdAt: -1 });
+    res.status(200).json(profiles);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch BioData profiles.' });
+  }
+};
+
+exports.getBioDataById = async (req, res) => {
+  try {
+    const profile = await BioData.findById(req.params.id);
+    if (!profile) {
+      return res.status(404).json({ error: 'BioData profile not found' });
+    }
+    res.status(200).json(profile);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch BioData profile' });
+  }
+};
+
+
+
 // Reusable error handler
 function handleErrors(res, err) {
   if (err.name === 'ValidationError') {
