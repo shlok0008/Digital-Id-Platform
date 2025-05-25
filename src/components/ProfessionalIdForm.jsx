@@ -34,13 +34,18 @@ const ProfessionalIdForm = () => {
       twitter: form.elements.twitter?.value,
       website: form.elements.website?.value,
       location: form.elements.location?.value,
-      products,
+      productsAndServices: products.map(p => ({
+        title: p.name, // Map 'name' to 'title'
+        description: p.description,
+        image: p.image,
+        price: p.price,
+        currency: p.currency
+      })),
       youtubeLinks: youtubeLinks.filter(link => link.trim() && isValidYouTubeUrl(link)),
-      payment: {
-        name: form.elements.paymentName?.value,
-        contact: form.elements.paymentContact?.value,
-        qrCode: qrPreview
-      }
+        paymentName: form.elements.paymentName?.value,
+      paymentContact: form.elements.paymentContact?.value,
+      qrCode: qrPreview
+
     };
 
     try {
@@ -78,6 +83,7 @@ const ProfessionalIdForm = () => {
     setYoutubeLinks(['']);
     setQrPreview(null);
   };
+
 
   const handleAddProduct = () => {
     if (products.length < 3) {
